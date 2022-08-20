@@ -1,8 +1,8 @@
-# An editor for plain text.
+# A read-only viewer for plain text.
 
 Not very useful by itself, but it's a fork of [lines.love](http://akkartik.name/lines.html)
-that you can take in other directions besides line drawings, while easily
-sharing patches between forks.
+that you can take in other directions, while easily sharing patches between
+forks.
 
 Designed above all to be easy to modify and give you early warning if your
 modifications break something.
@@ -14,7 +14,7 @@ optionally with a file path to edit.
 
 Alternatively, turn it into a .love file you can double-click on:
 ```
-$ zip -r /tmp/text.love *.lua
+$ zip -r /tmp/view.love *.lua
 ```
 
 By default, it reads/writes the file `lines.txt` in your default
@@ -41,19 +41,9 @@ found anything amiss: http://akkartik.name/contact
 
 * No support yet for right-to-left languages.
 
-* Undo/redo may be sluggish in large files. Large files may grow sluggish in
-  other ways. Works well in all circumstances with files under 50KB.
-
-* If you kill the process, say by force-quitting because things things get
-  sluggish, you can lose data.
-
 * Long wrapping lines can't yet distinguish between the cursor at end of one
   screen line and start of the next, so clicking the mouse to position the
   cursor can very occasionally do the wrong thing.
-
-* Touchpads can drag the mouse pointer using a light touch or a heavy click.
-  On Linux, drags using the light touch get interrupted when a key is pressed.
-  You'll have to press down to drag.
 
 * Can't scroll while selecting text with mouse.
 
@@ -62,16 +52,18 @@ found anything amiss: http://akkartik.name/contact
 ## Mirrors and Forks
 
 This repo is a fork of lines.love at [http://akkartik.name/lines.html](http://akkartik.name/lines.html).
-Updates to it can be downloaded from the following mirrors:
+Its immediate upstream is [text.love](https://codeberg.org/akkartik/text.love),
+a version without support for line drawings. Updates to it can be downloaded
+from the following mirrors:
 
-* https://codeberg.org/akkartik/text.love
-* https://repo.or.cz/text.love.git
-* https://tildegit.org/akkartik/text.love
-* https://git.tilde.institute/akkartik/text.love
-* https://git.sr.ht/~akkartik/text.love
-* https://notabug.org/akkartik/text.love
-* https://github.com/akkartik/text.love
-* https://pagure.io/text.love
+* https://codeberg.org/akkartik/view.love
+* https://repo.or.cz/view.love.git
+* https://tildegit.org/akkartik/view.love
+* https://git.tilde.institute/akkartik/view.love
+* https://git.sr.ht/~akkartik/view.love
+* https://notabug.org/akkartik/view.love
+* https://github.com/akkartik/view.love
+* https://pagure.io/view.love
 
 Further forks are encouraged. If you show me your fork, I'll link to it here.
 
