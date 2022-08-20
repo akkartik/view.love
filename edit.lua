@@ -65,11 +65,6 @@ function edit.initialize_state(top, left, right, font_height, line_height)  -- c
     width = right-left,
 
     filename = love.filesystem.getUserDirectory()..'/lines.txt',
-    next_save = nil,
-
-    -- undo
-    history = {},
-    next_history = 1,
 
     -- search
     search_term = nil,
@@ -111,23 +106,9 @@ function edit.draw(State)
 end
 
 function edit.update(State, dt)
-  if State.next_save and State.next_save < App.getTime() then
-    save_to_disk(State)
-    State.next_save = nil
-  end
-end
-
-function schedule_save(State)
-  if State.next_save == nil then
-    State.next_save = App.getTime() + 3  -- short enough that you're likely to still remember what you did
-  end
 end
 
 function edit.quit(State)
-  -- make sure to save before quitting
-  if State.next_save then
-    save_to_disk(State)
-  end
 end
 
 function edit.mouse_pressed(State, x,y, mouse_button)
@@ -193,10 +174,7 @@ function edit.textinput(State, t)
     State.search_term = State.search_term..t
     State.search_text = nil
     Text.search_next(State)
-  else
-    Text.textinput(State, t)
   end
-  schedule_save(State)
 end
 
 function edit.keychord_pressed(State, chord, key)
@@ -245,67 +223,12 @@ function edit.keychord_pressed(State, chord, key)
   elseif chord == 'C-0' then
     edit.update_font_settings(State, 20)
     Text.redraw_all(State)
-  -- undo
-  elseif chord == 'C-z' then
-    for _,line_cache in ipairs(State.line_cache) do line_cache.starty = nil end  -- just in case we scroll
-    local event = undo_event(State)
-    if event then
-      local src = event.before
-      State.screen_top1 = deepcopy(src.screen_top)
-      State.cursor1 = deepcopy(src.cursor)
-      State.selection1 = deepcopy(src.selection)
-      patch(State.lines, event.after, event.before)
-      patch_placeholders(State.line_cache, event.after, event.before)
-      -- if we're scrolling, reclaim all fragments to avoid memory leaks
-      Text.redraw_all(State)
-      schedule_save(State)
-    end
-  elseif chord == 'C-y' then
-    for _,line_cache in ipairs(State.line_cache) do line_cache.starty = nil end  -- just in case we scroll
-    local event = redo_event(State)
-    if event then
-      local src = event.after
-      State.screen_top1 = deepcopy(src.screen_top)
-      State.cursor1 = deepcopy(src.cursor)
-      State.selection1 = deepcopy(src.selection)
-      patch(State.lines, event.before, event.after)
-      -- if we're scrolling, reclaim all fragments to avoid memory leaks
-      Text.redraw_all(State)
-      schedule_save(State)
-    end
   -- clipboard
   elseif chord == 'C-c' then
     local s = Text.selection(State)
     if s then
       App.setClipboardText(s)
     end
-  elseif chord == 'C-x' then
-    for _,line_cache in ipairs(State.line_cache) do line_cache.starty = nil end  -- just in case we scroll
-    local s = Text.cut_selection(State, State.left, State.right)
-    if s then
-      App.setClipboardText(s)
-    end
-    schedule_save(State)
-  elseif chord == 'C-v' then
-    for _,line_cache in ipairs(State.line_cache) do line_cache.starty = nil end  -- just in case we scroll
-    -- We don't have a good sense of when to scroll, so we'll be conservative
-    -- and sometimes scroll when we didn't quite need to.
-    local before_line = State.cursor1.line
-    local before = snapshot(State, before_line)
-    local clipboard_data = App.getClipboardText()
-    for _,code in utf8.codes(clipboard_data) do
-      local c = utf8.char(code)
-      if c == '\n' then
-        Text.insert_return(State)
-      else
-        Text.insert_at_cursor(State, c)
-      end
-    end
-    if Text.cursor_out_of_screen(State) then
-      Text.snap_cursor_to_bottom_of_screen(State, State.left, State.right)
-    end
-    schedule_save(State)
-    record_undo_event(State, {before=before, after=snapshot(State, before_line, State.cursor1.line)})
   -- dispatch to text
   else
     for _,line_cache in ipairs(State.line_cache) do line_cache.starty = nil end  -- just in case we scroll

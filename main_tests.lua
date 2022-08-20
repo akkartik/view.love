@@ -44,33 +44,3 @@ function test_drop_file()
   check_eq(Editor_state.lines[3].data, 'ghi', 'F - test_drop_file/lines:3')
   edit.draw(Editor_state)
 end
-
-function test_drop_file_saves_previous()
-  io.write('\ntest_drop_file_saves_previous')
-  App.screen.init{width=Editor_state.left+300, height=300}
-  -- initially editing a file called foo that hasn't been saved to filesystem yet
-  Editor_state.lines = load_array{'abc', 'def'}
-  Editor_state.filename = 'foo'
-  schedule_save(Editor_state)
-  -- now drag a new file bar from the filesystem
-  App.filesystem['bar'] = 'abc\ndef\nghi\n'
-  local fake_dropped_file = {
-    opened = false,
-    getFilename = function(self)
-                    return 'bar'
-                  end,
-    open = function(self)
-             self.opened = true
-           end,
-    lines = function(self)
-              assert(self.opened)
-              return App.filesystem['bar']:gmatch('[^\n]+')
-            end,
-    close = function(self)
-              self.opened = false
-            end,
-  }
-  App.filedropped(fake_dropped_file)
-  -- filesystem now contains a file called foo
-  check_eq(App.filesystem['foo'], 'abc\ndef\n', 'F - test_drop_file_saves_previous')
-end

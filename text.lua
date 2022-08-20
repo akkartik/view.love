@@ -3,7 +3,6 @@ Text = {}
 
 require 'search'
 require 'select'
-require 'undo'
 require 'text_tests'
 
 -- draw a line starting from startpos to screen at y between State.left and State.right
@@ -150,128 +149,11 @@ function Text.compute_fragments(State, line_index)
   end
 end
 
-function Text.textinput(State, t)
-  if App.mouse_down(1) then return end
-  if App.ctrl_down() or App.alt_down() or App.cmd_down() then return end
-  local before = snapshot(State, State.cursor1.line)
---?   print(State.screen_top1.line, State.screen_top1.pos, State.cursor1.line, State.cursor1.pos, State.screen_bottom1.line, State.screen_bottom1.pos)
-  Text.insert_at_cursor(State, t)
-  if State.cursor_y > App.screen.height - State.line_height then
-    Text.populate_screen_line_starting_pos(State, State.cursor1.line)
-    Text.snap_cursor_to_bottom_of_screen(State, State.left, State.right)
---?     print('=>', State.screen_top1.line, State.screen_top1.pos, State.cursor1.line, State.cursor1.pos, State.screen_bottom1.line, State.screen_bottom1.pos)
-  end
-  record_undo_event(State, {before=before, after=snapshot(State, State.cursor1.line)})
-end
-
-function Text.insert_at_cursor(State, t)
-  local byte_offset = Text.offset(State.lines[State.cursor1.line].data, State.cursor1.pos)
-  State.lines[State.cursor1.line].data = string.sub(State.lines[State.cursor1.line].data, 1, byte_offset-1)..t..string.sub(State.lines[State.cursor1.line].data, byte_offset)
-  Text.clear_screen_line_cache(State, State.cursor1.line)
-  State.cursor1.pos = State.cursor1.pos+1
-end
-
 -- Don't handle any keys here that would trigger love.textinput above.
 function Text.keychord_pressed(State, chord)
 --?   print('chord', chord, State.selection1.line, State.selection1.pos)
-  --== shortcuts that mutate text
-  if chord == 'return' then
-    local before_line = State.cursor1.line
-    local before = snapshot(State, before_line)
-    Text.insert_return(State)
-    State.selection1 = {}
-    if State.cursor_y > App.screen.height - State.line_height then
-      Text.snap_cursor_to_bottom_of_screen(State, State.left, State.right)
-    end
-    schedule_save(State)
-    record_undo_event(State, {before=before, after=snapshot(State, before_line, State.cursor1.line)})
-  elseif chord == 'tab' then
-    local before = snapshot(State, State.cursor1.line)
---?     print(State.screen_top1.line, State.screen_top1.pos, State.cursor1.line, State.cursor1.pos, State.screen_bottom1.line, State.screen_bottom1.pos)
-    Text.insert_at_cursor(State, '\t')
-    if State.cursor_y > App.screen.height - State.line_height then
-      Text.populate_screen_line_starting_pos(State, State.cursor1.line)
-      Text.snap_cursor_to_bottom_of_screen(State, State.left, State.right)
---?       print('=>', State.screen_top1.line, State.screen_top1.pos, State.cursor1.line, State.cursor1.pos, State.screen_bottom1.line, State.screen_bottom1.pos)
-    end
-    schedule_save(State)
-    record_undo_event(State, {before=before, after=snapshot(State, State.cursor1.line)})
-  elseif chord == 'backspace' then
-    if State.selection1.line then
-      Text.delete_selection(State, State.left, State.right)
-      schedule_save(State)
-      return
-    end
-    local before
-    if State.cursor1.pos > 1 then
-      before = snapshot(State, State.cursor1.line)
-      local byte_start = utf8.offset(State.lines[State.cursor1.line].data, State.cursor1.pos-1)
-      local byte_end = utf8.offset(State.lines[State.cursor1.line].data, State.cursor1.pos)
-      if byte_start then
-        if byte_end then
-          State.lines[State.cursor1.line].data = string.sub(State.lines[State.cursor1.line].data, 1, byte_start-1)..string.sub(State.lines[State.cursor1.line].data, byte_end)
-        else
-          State.lines[State.cursor1.line].data = string.sub(State.lines[State.cursor1.line].data, 1, byte_start-1)
-        end
-        State.cursor1.pos = State.cursor1.pos-1
-      end
-    elseif State.cursor1.line > 1 then
-      before = snapshot(State, State.cursor1.line-1, State.cursor1.line)
-      -- join lines
-      State.cursor1.pos = utf8.len(State.lines[State.cursor1.line-1].data)+1
-      State.lines[State.cursor1.line-1].data = State.lines[State.cursor1.line-1].data..State.lines[State.cursor1.line].data
-      table.remove(State.lines, State.cursor1.line)
-      table.remove(State.line_cache, State.cursor1.line)
-      State.cursor1.line = State.cursor1.line-1
-    end
-    if State.screen_top1.line > #State.lines then
-      Text.populate_screen_line_starting_pos(State, #State.lines)
-      local line_cache = State.line_cache[#State.line_cache]
-      State.screen_top1 = {line=#State.lines, pos=line_cache.screen_line_starting_pos[#line_cache.screen_line_starting_pos]}
-    elseif Text.lt1(State.cursor1, State.screen_top1) then
-      local top2 = Text.to2(State, State.screen_top1)
-      top2 = Text.previous_screen_line(State, top2, State.left, State.right)
-      State.screen_top1 = Text.to1(State, top2)
-      Text.redraw_all(State)  -- if we're scrolling, reclaim all fragments to avoid memory leaks
-    end
-    Text.clear_screen_line_cache(State, State.cursor1.line)
-    assert(Text.le1(State.screen_top1, State.cursor1))
-    schedule_save(State)
-    record_undo_event(State, {before=before, after=snapshot(State, State.cursor1.line)})
-  elseif chord == 'delete' then
-    if State.selection1.line then
-      Text.delete_selection(State, State.left, State.right)
-      schedule_save(State)
-      return
-    end
-    local before
-    if State.cursor1.pos <= utf8.len(State.lines[State.cursor1.line].data) then
-      before = snapshot(State, State.cursor1.line)
-    else
-      before = snapshot(State, State.cursor1.line, State.cursor1.line+1)
-    end
-    if State.cursor1.pos <= utf8.len(State.lines[State.cursor1.line].data) then
-      local byte_start = utf8.offset(State.lines[State.cursor1.line].data, State.cursor1.pos)
-      local byte_end = utf8.offset(State.lines[State.cursor1.line].data, State.cursor1.pos+1)
-      if byte_start then
-        if byte_end then
-          State.lines[State.cursor1.line].data = string.sub(State.lines[State.cursor1.line].data, 1, byte_start-1)..string.sub(State.lines[State.cursor1.line].data, byte_end)
-        else
-          State.lines[State.cursor1.line].data = string.sub(State.lines[State.cursor1.line].data, 1, byte_start-1)
-        end
-        -- no change to State.cursor1.pos
-      end
-    elseif State.cursor1.line < #State.lines then
-      -- join lines
-      State.lines[State.cursor1.line].data = State.lines[State.cursor1.line].data..State.lines[State.cursor1.line+1].data
-      table.remove(State.lines, State.cursor1.line+1)
-      table.remove(State.line_cache, State.cursor1.line+1)
-    end
-    Text.clear_screen_line_cache(State, State.cursor1.line)
-    schedule_save(State)
-    record_undo_event(State, {before=before, after=snapshot(State, State.cursor1.line)})
   --== shortcuts that move the cursor
-  elseif chord == 'left' then
+  if chord == 'left' then
     Text.left(State)
     State.selection1 = {}
   elseif chord == 'right' then
@@ -353,16 +235,6 @@ function Text.keychord_pressed(State, chord)
     end
     Text.pagedown(State)
   end
-end
-
-function Text.insert_return(State)
-  local byte_offset = Text.offset(State.lines[State.cursor1.line].data, State.cursor1.pos)
-  table.insert(State.lines, State.cursor1.line+1, {data=string.sub(State.lines[State.cursor1.line].data, byte_offset)})
-  table.insert(State.line_cache, State.cursor1.line+1, {})
-  State.lines[State.cursor1.line].data = string.sub(State.lines[State.cursor1.line].data, 1, byte_offset-1)
-  Text.clear_screen_line_cache(State, State.cursor1.line)
-  State.cursor1.line = State.cursor1.line+1
-  State.cursor1.pos = 1
 end
 
 function Text.pageup(State)
