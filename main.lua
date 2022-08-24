@@ -48,7 +48,7 @@ function App.initialize(arg)
     load_from_disk(Editor_state)
     Text.redraw_all(Editor_state)
   end
-  love.window.setTitle('text.love - '..Editor_state.filename)
+  love.window.setTitle('view.love - '..Editor_state.filename)
 
   if #arg > 1 then
     print('ignoring commandline args after '..arg[1])
@@ -125,7 +125,7 @@ function App.filedropped(file)
   Editor_state.lines = load_from_file(file)
   file:close()
   Text.redraw_all(Editor_state)
-  love.window.setTitle('text.love - '..Editor_state.filename)
+  love.window.setTitle('view.love - '..Editor_state.filename)
 end
 
 function App.draw()
