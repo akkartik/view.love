@@ -30,6 +30,7 @@ While editing text:
 * `ctrl+z` to undo, `ctrl+y` to redo
 * `ctrl+=` to zoom in, `ctrl+-` to zoom out, `ctrl+0` to reset zoom
 * `alt+right`/`alt+left` to jump to the next/previous word, respectively
+* `ctrl+e` to modify the sources
 
 Exclusively tested so far with a US keyboard layout. If
 you use a different layout, please let me know if things worked, or if you
@@ -48,6 +49,10 @@ found anything amiss: http://akkartik.name/contact
 * Can't scroll while selecting text with mouse.
 
 * No scrollbars yet. That stuff is hard.
+
+* There are some temporary limitations when editing sources:
+    - no line drawings
+    - no selecting text
 
 ## Mirrors and Forks
 
