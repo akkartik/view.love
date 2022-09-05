@@ -85,7 +85,7 @@ function edit.draw(State)
     local line = State.lines[line_index]
 --?     print('draw:', y, line_index, line)
     if y + State.line_height > App.screen.height then break end
-    State.screen_bottom1.line = line_index
+    State.screen_bottom1 = {line=line_index, pos=nil}
 --?     print('text.draw', y, line_index)
     local startpos = 1
     if line_index == State.screen_top1.line then
@@ -95,7 +95,6 @@ function edit.draw(State)
     y = y + State.line_height
 --?     print('=> y', y)
   end
---?   print('screen bottom: '..tostring(State.screen_bottom1.pos)..' in '..tostring(State.lines[State.screen_bottom1.line].data))
   if State.search_term then
     Text.draw_search_bar(State)
   end
@@ -210,7 +209,10 @@ function edit.keychord_pressed(State, chord, key)
     return
   elseif chord == 'C-f' then
     State.search_term = ''
-    State.search_backup = {cursor={line=State.cursor1.line, pos=State.cursor1.pos}, screen_top={line=State.screen_top1.line, pos=State.screen_top1.pos}}
+    State.search_backup = {
+      cursor={line=State.cursor1.line, pos=State.cursor1.pos},
+      screen_top={line=State.screen_top1.line, pos=State.screen_top1.pos},
+    }
     assert(State.search_text == nil)
   -- zoom
   elseif chord == 'C-=' then
