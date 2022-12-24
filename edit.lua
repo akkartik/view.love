@@ -55,8 +55,8 @@ function edit.initialize_state(top, left, right, font_height, line_height)  -- c
     em = App.newText(love.graphics.getFont(), 'm'),  -- widest possible character width
 
     top = top,
-    left = left,
-    right = right,
+    left = math.floor(left),
+    right = math.floor(right),
     width = right-left,
 
     filename = love.filesystem.getUserDirectory()..'/lines.txt',  -- '/' should work even on Windows
@@ -105,7 +105,7 @@ end
 function edit.quit(State)
 end
 
-function edit.mouse_pressed(State, x,y, mouse_button)
+function edit.mouse_press(State, x,y, mouse_button)
   if State.search_term then return end
 --?   print('press', State.selection1.line, State.selection1.pos)
   for line_index,line in ipairs(State.lines) do
@@ -132,7 +132,7 @@ function edit.mouse_pressed(State, x,y, mouse_button)
   end
 end
 
-function edit.mouse_released(State, x,y, mouse_button)
+function edit.mouse_release(State, x,y, mouse_button)
   if State.search_term then return end
 --?   print('release')
   for line_index,line in ipairs(State.lines) do
@@ -160,7 +160,7 @@ function edit.mouse_released(State, x,y, mouse_button)
 --?   print('selection:', State.selection1.line, State.selection1.pos)
 end
 
-function edit.textinput(State, t)
+function edit.text_input(State, t)
   if State.search_term then
     State.search_term = State.search_term..t
     State.search_text = nil
@@ -168,7 +168,7 @@ function edit.textinput(State, t)
   end
 end
 
-function edit.keychord_pressed(State, chord, key)
+function edit.keychord_press(State, chord, key)
   if State.selection1.line and
       -- printable character created using shift key => delete selection
       -- (we're not creating any ctrl-shift- or alt-shift- combinations using regular/printable keys)
@@ -229,11 +229,11 @@ function edit.keychord_pressed(State, chord, key)
   -- dispatch to text
   else
     for _,line_cache in ipairs(State.line_cache) do line_cache.starty = nil end  -- just in case we scroll
-    Text.keychord_pressed(State, chord)
+    Text.keychord_press(State, chord)
   end
 end
 
-function edit.key_released(State, key, scancode)
+function edit.key_release(State, key, scancode)
 end
 
 function edit.update_font_settings(State, font_height)
@@ -261,21 +261,21 @@ function edit.initialize_test_state()
       15)  -- line height
 end
 
--- all textinput events are also keypresses
+-- all text_input events are also keypresses
 -- TODO: handle chords of multiple keys
-function edit.run_after_textinput(State, t)
-  edit.keychord_pressed(State, t)
-  edit.textinput(State, t)
-  edit.key_released(State, t)
+function edit.run_after_text_input(State, t)
+  edit.keychord_press(State, t)
+  edit.text_input(State, t)
+  edit.key_release(State, t)
   App.screen.contents = {}
   edit.update(State, 0)
   edit.draw(State)
 end
 
--- not all keys are textinput
+-- not all keys are text_input
 function edit.run_after_keychord(State, chord)
-  edit.keychord_pressed(State, chord)
-  edit.key_released(State, chord)
+  edit.keychord_press(State, chord)
+  edit.key_release(State, chord)
   App.screen.contents = {}
   edit.update(State, 0)
   edit.draw(State)
@@ -283,9 +283,9 @@ end
 
 function edit.run_after_mouse_click(State, x,y, mouse_button)
   App.fake_mouse_press(x,y, mouse_button)
-  edit.mouse_pressed(State, x,y, mouse_button)
+  edit.mouse_press(State, x,y, mouse_button)
   App.fake_mouse_release(x,y, mouse_button)
-  edit.mouse_released(State, x,y, mouse_button)
+  edit.mouse_release(State, x,y, mouse_button)
   App.screen.contents = {}
   edit.update(State, 0)
   edit.draw(State)
@@ -293,7 +293,7 @@ end
 
 function edit.run_after_mouse_press(State, x,y, mouse_button)
   App.fake_mouse_press(x,y, mouse_button)
-  edit.mouse_pressed(State, x,y, mouse_button)
+  edit.mouse_press(State, x,y, mouse_button)
   App.screen.contents = {}
   edit.update(State, 0)
   edit.draw(State)
@@ -301,7 +301,7 @@ end
 
 function edit.run_after_mouse_release(State, x,y, mouse_button)
   App.fake_mouse_release(x,y, mouse_button)
-  edit.mouse_released(State, x,y, mouse_button)
+  edit.mouse_release(State, x,y, mouse_button)
   App.screen.contents = {}
   edit.update(State, 0)
   edit.draw(State)

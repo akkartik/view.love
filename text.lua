@@ -145,8 +145,8 @@ function Text.compute_fragments(State, line_index)
   end
 end
 
--- Don't handle any keys here that would trigger love.textinput above.
-function Text.keychord_pressed(State, chord)
+-- Don't handle any keys here that would trigger textinput above.
+function Text.keychord_press(State, chord)
 --?   print('chord', chord, State.selection1.line, State.selection1.pos)
   --== shortcuts that move the cursor
   if chord == 'left' then
