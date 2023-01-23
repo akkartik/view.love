@@ -57,17 +57,17 @@ found anything amiss: http://akkartik.name/contact
 
 This repo is a fork of [lines.love](http://akkartik.name/lines.html), an
 editor for plain text where you can also seamlessly insert line drawings.
-Its immediate upstream is [text.love](https://codeberg.org/akkartik/text.love),
+Its immediate upstream is [text.love](https://git.sr.ht/~akkartik/text.love),
 a version without support for line drawings. Updates to it can be downloaded
 from the following mirrors:
 
-* https://codeberg.org/akkartik/view.love
+* https://git.sr.ht/~akkartik/view.love
 * https://repo.or.cz/view.love.git
 * https://tildegit.org/akkartik/view.love
 * https://git.tilde.institute/akkartik/view.love
-* https://git.sr.ht/~akkartik/view.love
-* https://notabug.org/akkartik/view.love
 * https://github.com/akkartik/view.love
+* https://codeberg.org/akkartik/view.love
+* https://notabug.org/akkartik/view.love
 * https://pagure.io/view.love
 
 Further forks are encouraged. If you show me your fork, I'll link to it here.
