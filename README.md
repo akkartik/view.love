@@ -46,10 +46,6 @@ found anything amiss: http://akkartik.name/contact
 
 * No support yet for right-to-left languages.
 
-* Long wrapping lines can't yet distinguish between the cursor at end of one
-  screen line and start of the next, so clicking the mouse to position the
-  cursor can very occasionally do the wrong thing.
-
 * Can't scroll while selecting text with mouse.
 
 * No scrollbars yet. That stuff is hard.
