@@ -83,6 +83,7 @@ function edit.invalid1(State, loc1)
   return loc1.pos > #State.lines[loc1.line].data
 end
 
+-- return y drawn until
 function edit.draw(State)
   App.color(Text_color)
   if #State.lines ~= #State.line_cache then
@@ -115,6 +116,7 @@ function edit.draw(State)
   if State.search_term then
     Text.draw_search_bar(State)
   end
+  return y
 end
 
 function edit.update(State, dt)
