@@ -41,7 +41,7 @@ function Text.draw(State, line_index, y, startpos)
               love.graphics.print(State.search_term, State.left+lo_px,y)
             end
           else
-            Text.draw_cursor(State, State.left+Text.x(screen_line, State.cursor1.pos-pos+1), y)
+            Text.pretend_draw_cursor(State, State.left+Text.x(screen_line, State.cursor1.pos-pos+1), y)
           end
         end
       end
@@ -71,6 +71,11 @@ function Text.draw_cursor(State, x, y)
     App.color(Cursor_color)
     love.graphics.rectangle('fill', x,y, 3,State.line_height)
   end
+  State.cursor_x = x
+  State.cursor_y = y+State.line_height
+end
+
+function Text.pretend_draw_cursor(State, x, y)
   State.cursor_x = x
   State.cursor_y = y+State.line_height
 end
