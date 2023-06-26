@@ -66,6 +66,7 @@ from the following mirrors:
 * https://codeberg.org/akkartik/view.love
 * https://notabug.org/akkartik/view.love
 * https://pagure.io/view.love
+* https://nest.pijul.com/akkartik/view.love (using the Pijul version control system)
 
 Further forks are encouraged. If you show me your fork, I'll link to it here.
 
