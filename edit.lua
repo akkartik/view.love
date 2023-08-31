@@ -286,7 +286,7 @@ function edit.keychord_press(State, chord, key)
   elseif chord == 'C-c' then
     local s = Text.selection(State)
     if s then
-      App.setClipboardText(s)
+      App.set_clipboard(s)
     end
   -- dispatch to text
   else
