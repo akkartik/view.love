@@ -63,6 +63,7 @@ function App.load()
         load_file_from_source_or_save_directory('help.lua')
       load_file_from_source_or_save_directory('drawing_tests.lua')
     load_file_from_source_or_save_directory('source_tests.lua')
+  elseif Current_app == 'error' then
   else
     assert(false, 'unknown app "'..Current_app..'"')
   end
@@ -90,6 +91,7 @@ function App.initialize_globals()
     run.initialize_globals()
   elseif Current_app == 'source' then
     source.initialize_globals()
+  elseif Current_app == 'error' then
   else
     assert(false, 'unknown app "'..Current_app..'"')
   end
@@ -110,6 +112,7 @@ function App.initialize(arg)
     run.initialize(arg)
   elseif Current_app == 'source' then
     source.initialize(arg)
+  elseif Current_app == 'error' then
   else
     assert(false, 'unknown app "'..Current_app..'"')
   end
@@ -120,6 +123,7 @@ function App.resize(w,h)
     if run.resize then run.resize(w,h) end
   elseif Current_app == 'source' then
     if source.resize then source.resize(w,h) end
+  elseif Current_app == 'error' then
   else
     assert(false, 'unknown app "'..Current_app..'"')
   end
@@ -131,6 +135,7 @@ function App.filedropped(file)
     if run.file_drop then run.file_drop(file) end
   elseif Current_app == 'source' then
     if source.file_drop then source.file_drop(file) end
+  elseif Current_app == 'error' then
   else
     assert(false, 'unknown app "'..Current_app..'"')
   end
@@ -144,21 +149,22 @@ function App.focus(in_focus)
     if run.focus then run.focus(in_focus) end
   elseif Current_app == 'source' then
     if source.focus then source.focus(in_focus) end
+  elseif Current_app == 'error' then
   else
     assert(false, 'unknown app "'..Current_app..'"')
   end
 end
 
 function App.draw()
-  if Current_app == 'error' then
+  if Current_app == 'run' then
+    run.draw()
+  elseif Current_app == 'source' then
+    source.draw()
+  elseif Current_app == 'error' then
     love.graphics.setColor(0,0,1)
     love.graphics.rectangle('fill', 0,0, App.screen.width, App.screen.height)
     love.graphics.setColor(1,1,1)
     love.graphics.printf(Error_message, 40,40, 600)
-  elseif Current_app == 'run' then
-    run.draw()
-  elseif Current_app == 'source' then
-    source.draw()
   else
     assert(false, 'unknown app "'..Current_app..'"')
   end
@@ -175,6 +181,7 @@ function App.update(dt)
     run.update(dt)
   elseif Current_app == 'source' then
     source.update(dt)
+  elseif Current_app == 'error' then
   else
     assert(false, 'unknown app "'..Current_app..'"')
   end
@@ -206,6 +213,7 @@ function App.keychord_press(chord, key)
       if source.quit then source.quit() end
       Current_app = 'run'
       Error_message = nil
+    elseif Current_app == 'error' then
     else
       assert(false, 'unknown app "'..Current_app..'"')
     end
