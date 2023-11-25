@@ -125,6 +125,19 @@ function Text.populate_screen_line_starting_pos(State, line_index)
   end
 end
 
+function Text.text_input(State, t)
+  if App.mouse_down(1) then return end
+  if App.any_modifier_down() then
+    if App.key_down(t) then
+      -- The modifiers didn't change the key. Handle it in keychord_pressed.
+      return
+    else
+      -- Key mutated by the keyboard layout. Continue below.
+    end
+  end
+end
+
+-- Don't handle any keys here that would trigger text_input above.
 function Text.keychord_press(State, chord)
 --?   print('chord', chord, State.selection1.line, State.selection1.pos)
   --== shortcuts that move the cursor
