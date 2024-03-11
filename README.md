@@ -63,6 +63,7 @@ from the following mirrors:
 * https://repo.or.cz/view.love.git
 * https://tildegit.org/akkartik/view.love
 * https://git.tilde.institute/akkartik/view.love
+* https://git.merveilles.town/akkartik/view.love
 * https://github.com/akkartik/view.love
 * https://codeberg.org/akkartik/view.love
 * https://notabug.org/akkartik/view.love
