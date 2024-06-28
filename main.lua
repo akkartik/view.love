@@ -48,6 +48,7 @@ function App.load()
       load_file_from_source_or_save_directory('text.lua')
         load_file_from_source_or_save_directory('search.lua')
         load_file_from_source_or_save_directory('select.lua')
+        load_file_from_source_or_save_directory('undo.lua')
       load_file_from_source_or_save_directory('text_tests.lua')
     load_file_from_source_or_save_directory('run_tests.lua')
   elseif Current_app == 'source' then
