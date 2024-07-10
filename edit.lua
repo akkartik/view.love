@@ -250,7 +250,7 @@ function edit.keychord_press(State, chord, key)
       State.cursor1 = State.search_backup.cursor
       State.screen_top1 = State.search_backup.screen_top
       State.search_backup = nil
-      Text.redraw_all(State)  -- if we're scrolling, reclaim all fragments to avoid memory leaks
+      Text.redraw_all(State)  -- if we're scrolling, reclaim all line caches to avoid memory leaks
     elseif chord == 'return' then
       State.search_term = nil
       State.search_backup = nil
