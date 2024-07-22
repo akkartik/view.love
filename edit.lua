@@ -295,7 +295,6 @@ function edit.keychord_press(State, chord, key)
     if s then
       App.set_clipboard(s)
     end
-  -- dispatch to text
   else
     Text.keychord_press(State, chord)
   end
