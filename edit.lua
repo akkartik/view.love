@@ -236,13 +236,7 @@ function edit.text_input(State, t)
 end
 
 function edit.keychord_press(State, chord, key, scancode, is_repeat)
-  if State.selection1.line and
-      -- printable character created using shift key => delete selection
-      -- (we're not creating any ctrl-shift- or alt-shift- combinations using regular/printable keys)
-      (not App.shift_down() or utf8.len(key) == 1) and
-      chord ~= 'C-a' and chord ~= 'C-c' and chord ~= 'C-x' and chord ~= 'backspace' and chord ~= 'delete' and chord ~= 'C-z' and chord ~= 'C-y' and not App.is_cursor_movement(key) then
-    Text.delete_selection_and_record_undo_event(State)
-  end
+  local dm = App.default_modifier
   if State.search_term then
     if chord == 'escape' then
       State.search_term = nil
@@ -269,29 +263,29 @@ function edit.keychord_press(State, chord, key, scancode, is_repeat)
       Text.search_previous(State)
     end
     return
-  elseif chord == 'C-f' then
+  elseif chord == dm('f') then
     State.search_term = ''
     State.search_backup = {
       cursor={line=State.cursor1.line, pos=State.cursor1.pos},
       screen_top={line=State.screen_top1.line, pos=State.screen_top1.pos},
     }
   -- zoom
-  elseif chord == 'C-=' then
+  elseif chord == dm('=') then
     edit.update_font_settings(State, State.font_height+2)
     Text.redraw_all(State)
-  elseif chord == 'C--' then
+  elseif chord == dm('-') then
     if State.font_height > 2 then
       edit.update_font_settings(State, State.font_height-2)
       Text.redraw_all(State)
     end
-  elseif chord == 'C-0' then
+  elseif chord == dm('0') then
     edit.update_font_settings(State, 20)
     Text.redraw_all(State)
   -- clipboard
-  elseif chord == 'C-a' then
+  elseif chord == dm('a') then
     State.selection1 = {line=1, pos=1}
     State.cursor1 = {line=#State.lines, pos=utf8.len(State.lines[#State.lines].data)+1}
-  elseif chord == 'C-c' then
+  elseif chord == dm('c') then
     local s = Text.selection(State)
     if s then
       App.set_clipboard(s)
