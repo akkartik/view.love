@@ -197,6 +197,10 @@ function Text.keychord_press(State, chord, key, scancode, is_repeat)
       schedule_save(State)
       return
     end
+    if State.cursor1.line == 1 and State.cursor1.pos == 1 then
+      -- no-op
+      return
+    end
     local before
     if State.cursor1.pos > 1 then
       before = snapshot(State, State.cursor1.line)
@@ -210,7 +214,8 @@ function Text.keychord_press(State, chord, key, scancode, is_repeat)
         end
         State.cursor1.pos = State.cursor1.pos-1
       end
-    elseif State.cursor1.line > 1 then
+    else
+      assert(State.cursor1.line > 1)
       before = snapshot(State, State.cursor1.line-1, State.cursor1.line)
       -- join lines
       State.cursor1.pos = utf8.len(State.lines[State.cursor1.line-1].data)+1
