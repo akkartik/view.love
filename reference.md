@@ -92,7 +92,8 @@ automatically called for you as appropriate.
   string representation of the current key combination, consisting of the key
   with the following prefixes:
     * `C-` if one of the `ctrl` keys is pressed,
-    * `M-` if one of the `alt` keys is pressed,
+    * `M-` if the left `alt` key is pressed (right alt has other meanings in
+      some keyboard layouts, so we never check for it),
     * `S-` if one of the `shift` keys is pressed, and
     * `s-` if the `windows`/`cmd`/`super` key is pressed.
 
@@ -337,7 +338,7 @@ The following facilities help set these things up:
   key (arrow keys, page-up/down, home/end)
 
 * `App.cmd_down()`, `App.ctrl_down`, `App.alt_down()`, `App.shift_down()` --
-  predicates for different modifier keys.
+  predicates for different modifier keys. `alt_down` only checks for left alt.
 
 * `App.key_down(key)` -- returns `true` if the given key is currently pressed.
   (Based on [LÖVE](https://love2d.org/wiki/love.keyboard.isDown).)
