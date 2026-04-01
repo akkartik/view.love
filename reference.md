@@ -339,9 +339,6 @@ The following facilities help set these things up:
 * `App.cmd_down()`, `App.ctrl_down`, `App.alt_down()`, `App.shift_down()` --
   predicates for different modifier keys.
 
-* `App.any_modifier_down()` -- returns `true` if any of the modifier keys is
-  currently pressed.
-
 * `App.key_down(key)` -- returns `true` if the given key is currently pressed.
   (Based on [LÖVE](https://love2d.org/wiki/love.keyboard.isDown).)
 

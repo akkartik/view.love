@@ -43,15 +43,21 @@ function App.default_modifier(key)
   end
 end
 
-function App.any_modifier_down()
-  return App.ctrl_down() or App.alt_down() or App.shift_down() or App.cmd_down()
+-- Many keyboard layouts use a special altGr key to insert additional
+-- printable characters. SDL/LÖVE can't represent altGr distinctly.
+function alt_gr_down()
+  return App.key_down('ralt')
 end
 
+-- altGr is a separate modifier and never considered with alt or ctrl,
+-- regardless of layout.
 function App.ctrl_down()
+  if alt_gr_down() then return false end
   return App.key_down('lctrl') or App.key_down('rctrl')
 end
 
 function App.alt_down()
+  if alt_gr_down() then return false end
   return App.key_down('lalt') or App.key_down('ralt')
 end
 

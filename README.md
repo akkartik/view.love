@@ -34,6 +34,9 @@ While editing text:
 * `ctrl+z` to undo, `ctrl+y` to redo
 * `ctrl+=` to zoom in, `ctrl+-` to zoom out, `ctrl+0` to reset zoom
 * `alt+right`/`alt+left` to jump to the next/previous word, respectively
+  Only left alt is supported, because many keyboard layouts use right alt like
+  shift for typing characters, and I don't know how to figure out the current
+  layout.
 * mouse drag or `shift` + movement to select text, `ctrl+a` to select all
 * `ctrl+e` to modify the sources
 
