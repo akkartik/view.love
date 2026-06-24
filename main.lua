@@ -165,6 +165,17 @@ function App.filedropped(file)
   end
 end
 
+function App.directorydropped(dir)
+  if current_app_is_warning() then return end
+  if Current_app == 'run' then
+    if run.dir_drop then run.dir_drop(dir) end
+  elseif Current_app == 'source' then
+    if source.dir_drop then source.dir_drop(dir) end
+  else
+    assert(false, 'unknown app "'..Current_app..'"')
+  end
+end
+
 function App.focus(in_focus)
   if current_app_is_warning() then return end
   if in_focus then
